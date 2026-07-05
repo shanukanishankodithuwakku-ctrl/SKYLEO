@@ -54,20 +54,154 @@
         .logo { font-size: 24px; font-weight: bold; color: var(--white); letter-spacing: 2px; }
         .logo span { color: var(--teal); }
 
-        nav ul {
+        .nav-actions {
             display: flex;
-            list-style: none;
-            gap: 2rem;
+            align-items: center;
+            gap: 1.2rem;
         }
 
-        nav a {
-            color: var(--slate-light);
+        .cta-nav {
+            display: inline-block;
+            background: var(--teal);
+            color: var(--white);
+            padding: 0.55rem 1.5rem;
             text-decoration: none;
-            font-size: 0.95rem;
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .cta-nav:hover {
+            background: var(--teal-bright);
+            transform: translateY(-2px);
+        }
+
+        .menu-toggle {
+            background: none;
+            border: 1px solid rgba(148, 163, 184, 0.3);
+            color: var(--white);
+            width: 42px;
+            height: 42px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .menu-toggle:hover { border-color: var(--teal); }
+
+        .menu-toggle span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background: var(--white);
+            transition: all 0.3s;
+        }
+
+        /* Drawer */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.7);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s;
+            z-index: 1100;
+        }
+
+        .drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: min(340px, 85vw);
+            background: var(--charcoal);
+            border-left: 1px solid rgba(13, 148, 136, 0.25);
+            box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5);
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1200;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+        }
+
+        .drawer.open { transform: translateX(0); }
+
+        .drawer-close {
+            align-self: flex-end;
+            background: none;
+            border: none;
+            color: var(--slate-light);
+            font-size: 1.8rem;
+            line-height: 1;
+            cursor: pointer;
+            margin-bottom: 2rem;
             transition: color 0.3s;
         }
 
-        nav a:hover { color: var(--teal); }
+        .drawer-close:hover { color: var(--teal); }
+
+        .drawer nav.drawer-nav {
+            position: static;
+            background: none;
+            padding: 0;
+            border: none;
+        }
+
+        .drawer-nav ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .drawer-nav a {
+            display: block;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 1.15rem;
+            letter-spacing: 1px;
+            padding: 0.9rem 0;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            transition: color 0.3s, padding-left 0.3s;
+        }
+
+        .drawer-nav a:hover {
+            color: var(--teal-bright);
+            padding-left: 0.4rem;
+        }
+
+        .drawer-nav .drawer-label {
+            display: block;
+            color: var(--slate);
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding-top: 1.6rem;
+        }
+
+        .drawer-nav .sub-link {
+            padding-left: 1rem;
+            font-size: 1rem;
+            color: var(--slate-light);
+        }
+
+        .drawer-nav .sub-link::before {
+            content: '↳ ';
+            color: var(--teal);
+        }
 
         .container {
             max-width: 1200px;
@@ -103,6 +237,28 @@
             background: radial-gradient(circle, rgba(13, 148, 136, 0.15) 0%, transparent 70%);
             border-radius: 50%;
             animation: float 20s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(10,10,10,0.75) 0%, rgba(10,10,10,0.55) 50%, rgba(10,10,10,0.9) 100%);
+            z-index: 1;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .hero-video { display: none; }
         }
 
         @keyframes float {
@@ -462,24 +618,44 @@
     <nav>
         <div class="container">
             <div class="logo">SKY<span>LEO</span></div>
+            <div class="nav-actions">
+                <a href="#contact" class="cta-nav">GET STARTED</a>
+                <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay"></div>
+    <aside class="drawer" id="drawer" aria-hidden="true">
+        <button class="drawer-close" id="drawerClose" aria-label="Close menu">&times;</button>
+        <nav class="drawer-nav">
             <ul>
                 <li><a href="#story">Story</a></li>
                 <li><a href="#values">Values</a></li>
                 <li><a href="#why">Why SKYLEO</a></li>
+                <li><span class="drawer-label">Projects</span></li>
+                <li><a href="/workdash" class="sub-link">HRM Tool — WorkDash</a></li>
+                <li><a href="/Clarion" class="sub-link">ATS Resume Optimizer</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
-        </div>
-    </nav>
+        </nav>
+    </aside>
 
     <!-- Hero -->
     <section class="hero">
+        <video class="hero-video" autoplay muted loop playsinline poster="assets/hero-poster.jpg">
+            <source src="assets/hero-bg.mp4" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
             <h1>SKYLEO</h1>
             <p class="tagline">Systematic Knowledge Yielding Leveraged Enterprise Operations</p>
             <p class="headline">Enterprise-grade business systems for startup founders — at a fraction of enterprise cost.</p>
             <div style="margin-top: 2rem;">
                 <a href="#contact" class="cta-primary">GET STARTED</a>
-                <a href="#story" class="cta-secondary">OUR STORY</a>
             </div>
         </div>
     </section>
@@ -736,6 +912,34 @@
             el.style.transition = 'all 0.6s ease-out';
             observer.observe(el);
         });
+    </script>
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const drawer = document.getElementById('drawer');
+        const drawerOverlay = document.getElementById('drawerOverlay');
+        const drawerClose = document.getElementById('drawerClose');
+
+        function openDrawer() {
+            drawer.classList.add('open');
+            drawerOverlay.classList.add('active');
+            drawer.setAttribute('aria-hidden', 'false');
+            menuToggle.setAttribute('aria-expanded', 'true');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDrawer() {
+            drawer.classList.remove('open');
+            drawerOverlay.classList.remove('active');
+            drawer.setAttribute('aria-hidden', 'true');
+            menuToggle.setAttribute('aria-expanded', 'false');
+            document.body.style.overflow = '';
+        }
+
+        menuToggle.addEventListener('click', openDrawer);
+        drawerClose.addEventListener('click', closeDrawer);
+        drawerOverlay.addEventListener('click', closeDrawer);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+        document.querySelectorAll('.drawer-nav a').forEach(a => a.addEventListener('click', closeDrawer));
     </script>
 </body>
 </html>
