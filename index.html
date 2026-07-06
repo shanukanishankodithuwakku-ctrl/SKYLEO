@@ -36,9 +36,10 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 10, 10, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(13, 148, 136, 0.2);
+            /* Translucent nav so video shows underneath */
+            background: rgba(10, 10, 10, 0.45);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
             z-index: 1000;
             padding: 0.8rem 2rem;
         }
@@ -218,7 +219,7 @@
             background: linear-gradient(135deg, var(--black) 0%, var(--navy) 100%);
             position: relative;
             overflow: hidden;
-            margin-top: 60px;
+            margin-top: 0;
             animation: fadeIn 0.8s ease-in;
         }
 
@@ -940,6 +941,17 @@
         drawerOverlay.addEventListener('click', closeDrawer);
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
         document.querySelectorAll('.drawer-nav a').forEach(a => a.addEventListener('click', closeDrawer));
+    </script>
+
+    <script>
+        // Ensure hero video is muted and attempts to play (handles browser autoplay policies)
+        (function() {
+            const vid = document.querySelector('.hero-video');
+            if (!vid) return;
+            try { vid.muted = true; } catch (e) {}
+            const p = vid.play();
+            if (p && typeof p.catch === 'function') p.catch(() => {});
+        })();
     </script>
 </body>
 </html>
